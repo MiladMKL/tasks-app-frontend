@@ -1,33 +1,55 @@
 import { useState, useEffect } from 'react'
 import Task from './components/Task'
-import axios from 'axios'
+import Notification from './components/Notification'
+import taskService from './services/tasks'
+import './index.css'
 
 
 const App = (props) => {
 
   /*
   ---------------------------- useState vars */
+
   const [tasks, setTasks] = useState([]) // all tasks (IST EIN ARRAY!!!)
   const [newTask, setNewTask] = useState('') // new task (input)
   const [showAllTasks, setShowAllTasks] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
 
 
   /*
   ---------------------------- useEffect */
+
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/tasks')
-      .then(response => {
-        setTasks(response.data)
+    taskService
+      .getAll()
+      .then(initialTasks => {
+        setTasks(initialTasks)
       })
   }, [])
 
-
   /*
   ---------------------------- Methods */
+
+  const toggleTaskDoneFor = (id) => {
+    const task = tasks.find(task => task.id === id)
+    const changedTask = { ...task, done: !task.done }
+
+    taskService
+      .update(id, changedTask)
+      .then(returnedTask => {
+        setTasks(tasks.map(task => task.id !== id ? task : returnedTask)) // Gibt veraendertes Task zurueck
+      })
+      .catch(error => {
+        setErrorMessage(`Task '${task.name}' was already removed from server`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+        setTasks(tasks.filter(n => n.id !== id))
+      })
+  }
+
   const addTask = (event) => {
     event.preventDefault()
-    console.log('clicked!', event.target);
 
     const newTaskObject = {
       id: tasks.count + 1,
@@ -36,17 +58,20 @@ const App = (props) => {
       done: false
     }
 
-    axios.post('http://localhost:3001/tasks', newTaskObject)
-      .then(response => {
-        setTasks(tasks.concat(response.data))
+    taskService
+      .create(newTaskObject)
+      .then(returnedTask => {
+        setTasks(tasks.concat(returnedTask))
         setNewTask('')
       })
   }
 
+  // Input change
   const handleInputChange = (event) => {
     setNewTask(event.target.value)
   }
 
+  // Show all tasks
   const tasksToShow = showAllTasks ? tasks : tasks.filter(task => task.done)
 
   /*
@@ -54,9 +79,10 @@ const App = (props) => {
   return (
     <div>
       <h1>Tasks</h1>
+      <Notification message={errorMessage} />
       <button onClick={() => setShowAllTasks(!showAllTasks)}>{showAllTasks ? 'show done' : 'show all tasks'}</button>
       <ul>
-        {tasksToShow.map(task => <Task key={task.id} task={task} />)}
+        {tasksToShow.map(task => <Task key={task.id} task={task} toggleTaskDone={() => toggleTaskDoneFor(task.id)} />)}
       </ul>
 
       <form onSubmit={addTask}>

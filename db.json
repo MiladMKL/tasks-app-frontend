@@ -10,7 +10,7 @@
       "id": 2,
       "name": "learn JavaScript",
       "date": "2019-05-30T18: 39: 34.091Z",
-      "done": false
+      "done": true
     },
     {
       "id": 3,
@@ -28,12 +28,18 @@
       "id": 5,
       "name": "learn English",
       "date": "2022-07-05T13:40:55.801Z",
-      "done": false
+      "done": true
     },
     {
       "id": 6,
       "name": "learn German",
       "date": "2022-07-05T14:09:33.121Z",
+      "done": false
+    },
+    {
+      "id": 7,
+      "name": "learn Naturquelle",
+      "date": "2022-07-05T14:42:45.539Z",
       "done": false
     }
   ]
