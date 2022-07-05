@@ -1,25 +1,76 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react'
+import Task from './components/Task'
+import axios from 'axios'
 
-function App() {
+
+const App = (props) => {
+
+  /*
+  ---------------------------- useState vars */
+  const [tasks, setTasks] = useState([]) // all tasks (IST EIN ARRAY!!!)
+  const [newTask, setNewTask] = useState('') // new task (input)
+  const [showAllTasks, setShowAllTasks] = useState(true)
+
+
+  /*
+  ---------------------------- useEffect */
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/tasks')
+      .then(response => {
+        setTasks(response.data)
+      })
+  }, [])
+
+
+  /*
+  ---------------------------- Methods */
+  const addTask = (event) => {
+    event.preventDefault()
+    console.log('clicked!', event.target);
+
+    const newTaskObject = {
+      id: tasks.count + 1,
+      name: newTask,
+      date: new Date(),
+      done: false
+    }
+
+    axios.post('http://localhost:3001/tasks', newTaskObject)
+      .then(response => {
+        setTasks(tasks.concat(response.data))
+        setNewTask('')
+      })
+  }
+
+  const handleInputChange = (event) => {
+    setNewTask(event.target.value)
+  }
+
+  const tasksToShow = showAllTasks ? tasks : tasks.filter(task => task.done)
+
+  /*
+  ---------------------------- Render */
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Tasks</h1>
+      <button onClick={() => setShowAllTasks(!showAllTasks)}>{showAllTasks ? 'show done' : 'show all tasks'}</button>
+      <ul>
+        {tasksToShow.map(task => <Task key={task.id} task={task} />)}
+      </ul>
+
+      <form onSubmit={addTask}>
+        <input
+          value={newTask}
+          onChange={handleInputChange}
+        />
+        <button type="submit">Add</button>
+      </form>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
+
+
+
