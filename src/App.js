@@ -30,9 +30,9 @@ const App = (props) => {
   /*
   ---------------------------- Methods */
 
-  const toggleTaskDoneFor = (id) => {
+  const toggleTaskCompletedFor = (id) => {
     const task = tasks.find(task => task.id === id)
-    const changedTask = { ...task, done: !task.done }
+    const changedTask = { ...task, completed: !task.completed }
 
     taskService
       .update(id, changedTask)
@@ -40,7 +40,7 @@ const App = (props) => {
         setTasks(tasks.map(task => task.id !== id ? task : returnedTask)) // Gibt veraendertes Task zurueck
       })
       .catch(error => {
-        setErrorMessage(`Task '${task.name}' was already removed from server`)
+        setErrorMessage(`Task '${task.title}' was already removed from server`)
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
@@ -53,9 +53,9 @@ const App = (props) => {
 
     const newTaskObject = {
       id: tasks.count + 1,
-      name: newTask,
+      title: newTask,
       date: new Date(),
-      done: false
+      completed: false
     }
 
     taskService
@@ -72,7 +72,7 @@ const App = (props) => {
   }
 
   // Show all tasks
-  const tasksToShow = showAllTasks ? tasks : tasks.filter(task => task.done)
+  const tasksToShow = showAllTasks ? tasks : tasks.filter(task => task.completed)
 
   /*
   ---------------------------- Render */
@@ -82,7 +82,7 @@ const App = (props) => {
       <Notification message={errorMessage} />
       <button onClick={() => setShowAllTasks(!showAllTasks)}>{showAllTasks ? 'show done' : 'show all tasks'}</button>
       <ul>
-        {tasksToShow.map(task => <Task key={task.id} task={task} toggleTaskDone={() => toggleTaskDoneFor(task.id)} />)}
+        {tasksToShow.map(task => <Task key={task.id} task={task} toggleTaskCompleted={() => toggleTaskCompletedFor(task.id)} />)}
       </ul>
 
       <form onSubmit={addTask}>

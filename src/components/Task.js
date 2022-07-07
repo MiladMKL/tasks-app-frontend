@@ -1,11 +1,11 @@
-const Task = ({ task, toggleTaskDone }) => {
-  const label = task.done ? '✓' : '✗'
+const Task = ({ task, toggleTaskCompleted }) => {
+  const label = task.completed ? '✓' : '✗'
 
   return (
     <li>
-      {task.name}
+      {task.title}
       <span> </span>
-      <button onClick={toggleTaskDone}>{label}</button>
+      <button onClick={toggleTaskCompleted}>{label}</button>
     </li>
   )
 }
