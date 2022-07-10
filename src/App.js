@@ -24,12 +24,23 @@ const App = () => {
   /*
   ---------------------------- useEffect */
 
+  // Load all tasks from server
   useEffect(() => {
     taskService
       .getAll()
       .then(initialTasks => {
         setTasks(initialTasks)
       })
+  }, [])
+
+  // Load user from localStorage
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      taskService.setToken(user.token)
+    }
   }, [])
 
   /*
@@ -79,7 +90,7 @@ const App = () => {
   // Show all tasks
   const tasksToShow = showAllTasks ? tasks : tasks.filter(task => task.completed)
 
-  // Login
+  // Login handler
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -94,6 +105,22 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       setErrorMessage('Wrong credentials')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
+  // Logout handler
+  const handleLogout = (event) => {
+    event.preventDefault()
+
+    try {
+      window.localStorage.removeItem('loggedUser')
+      setUser(null)
+      taskService.setToken(null)
+    } catch (exception) {
+      setErrorMessage('Logout failed')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -128,6 +155,14 @@ const App = () => {
     )
   }
 
+  const logoutForm = () => {
+    return (
+      <form onSubmit={handleLogout}>
+        <button type="submit">Logout</button>
+      </form>
+    )
+  }
+
   /*
   ---------------------------- Render */
   return (
@@ -140,6 +175,7 @@ const App = () => {
         <div>
           <p>{user.name} logged-in</p>
           {taskForm()}
+          {logoutForm()}
         </div>}
       <div>
         <button onClick={() => setShowAllTasks(!showAllTasks)}>{showAllTasks ? 'show done' : 'show all tasks'}</button>
