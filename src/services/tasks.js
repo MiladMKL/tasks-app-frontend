@@ -1,13 +1,18 @@
 import axios from 'axios'
-// const baseUrl = 'http://localhost:3001/tasks'
-// const baseUrl = 'http://localhost:3001/api/tasks'
 const baseUrl = '/api/tasks'
+
+let token = null
+
+const setToken = newToken => {
+  token = `bearer ${newToken}`
+}
 
 /** Handles axios requests */
 
 const getAll = () => {
   const request = axios.get(baseUrl)
 
+  /*
   const nonExisting = {
     id: 10000,
     title: 'This note is not saved to server',
@@ -15,13 +20,21 @@ const getAll = () => {
     completed: true,
   }
   return request.then(response => response.data.concat(nonExisting))
+  */
 
-  // return request.then(response => response.data)
+  return request.then(response => response.data)
 }
 
-const create = newObject => {
-  const request = axios.post(baseUrl, newObject)
-  return request.then(response => response.data)
+const create = async newObject => {
+  const config = {
+    headers: { Authorization: token }
+  }
+
+  // const request = axios.post(baseUrl, newObject)
+  // return request.then(response => response.data)
+
+  const response = await axios.post(baseUrl, newObject, config)
+  return response.data
 }
 
 const update = (id, newObject) => {
@@ -29,4 +42,4 @@ const update = (id, newObject) => {
   return request.then(response => response.data)
 }
 
-export default { getAll, create, update }
+export default { getAll, create, update, setToken }
