@@ -7,3 +7,8 @@ npm install json-server --save-dev
 
 To start the server:
 npm run server -> starts JSON-Server
+
+---
+
+To make required props:
+npm install prop-types
