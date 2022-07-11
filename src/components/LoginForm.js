@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types'
+
 // LoginForm ist eigentlich nur ein Template, das die Login-Formular-Elemente enthält.
 // Der aufrufer muss die Elemente die das LoginForm braucht an ihr übergeben.
 const LoginForm = ({ handleSubmit, handleUsernameChange, handlePasswordChange, username, password }) => {
@@ -18,6 +20,14 @@ const LoginForm = ({ handleSubmit, handleUsernameChange, handlePasswordChange, u
       </form>
     </div>
   )
+}
+
+LoginForm.propTypes = {
+  handleSubmit: PropTypes.func.isRequired,
+  handleUsernameChange: PropTypes.func.isRequired,
+  handlePasswordChange: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired
 }
 
 export default LoginForm

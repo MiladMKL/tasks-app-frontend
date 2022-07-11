@@ -94,7 +94,7 @@ const App = () => {
       .then(returnedTask => {
         setTasks(tasks.map(task => task.id !== id ? task : returnedTask)) // Gibt veraendertes Task zurueck
       })
-      .catch(error => {
+      .catch(() => {
         setErrorMessage(`Task '${task.title}' was already removed from server`)
         setTimeout(() => {
           setErrorMessage(null)
